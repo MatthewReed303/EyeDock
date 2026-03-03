@@ -1,4 +1,4 @@
-name: Build Debug APK (Mock Google Services)
+name: Build Debug APK (Full Mock Google Services)
 
 on:
   workflow_dispatch:
@@ -20,13 +20,17 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    # Create a minimal mock google-services.json to satisfy the plugin
-    # This disables real Google Drive but allows the build to complete
+    # Create a more complete mock google-services.json with required api_key/current_key
     - name: Create mock google-services.json
       run: |
         mkdir -p app/src/debug
         cat << EOF > app/src/debug/google-services.json
         {
+          "api_key": [
+            {
+              "current_key": ""
+            }
+          ],
           "project_info": {
             "project_number": "000000000000",
             "firebase_url": "https://mock-project.firebaseio.com",
