@@ -1,4 +1,4 @@
-name: Build Debug APK (Full Mock Google Services)
+name: Build Debug APK
 
 on:
   workflow_dispatch:
@@ -20,31 +20,31 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    # Create a more complete mock google-services.json with required api_key/current_key
+    # Create a robust mock google-services.json that passes validation
     - name: Create mock google-services.json
       run: |
         mkdir -p app/src/debug
-        cat << EOF > app/src/debug/google-services.json
+        cat << 'EOF' > app/src/debug/google-services.json
         {
-          "api_key": [
-            {
-              "current_key": ""
-            }
-          ],
           "project_info": {
             "project_number": "000000000000",
             "firebase_url": "https://mock-project.firebaseio.com",
-            "project_id": "mock-project",
+            "project_id": "mock-project-id",
             "storage_bucket": "mock-project.appspot.com"
           },
           "client": [
             {
               "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:mockdebug",
+                "mobilesdk_app_id": "1:000000000000:android:debugmock",
                 "android_client_info": {
                   "package_name": "com.eyedock.app.debug"
                 }
-              }
+              },
+              "api_key": [
+                {
+                  "current_key": "AIzaSyDUMMYKEYFORDEBUGBUILDS1234567890"
+                }
+              ]
             }
           ]
         }
