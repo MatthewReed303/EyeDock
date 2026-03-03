@@ -1,4 +1,4 @@
-name: Build Debug APK (No Google Services)
+name: Build Debug APK (Mock Google Services)
 
 on:
   workflow_dispatch:
@@ -20,12 +20,31 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    # Create a dummy/empty google-services.json to satisfy the plugin (prevents failure)
-    # This disables real Google Drive but allows build to complete
-    - name: Create dummy google-services.json
+    # Create a minimal mock google-services.json to satisfy the plugin
+    # This disables real Google Drive but allows the build to complete
+    - name: Create mock google-services.json
       run: |
         mkdir -p app/src/debug
-        echo '{}' > app/src/debug/google-services.json  # Empty JSON is enough for debug
+        cat << EOF > app/src/debug/google-services.json
+        {
+          "project_info": {
+            "project_number": "000000000000",
+            "firebase_url": "https://mock-project.firebaseio.com",
+            "project_id": "mock-project",
+            "storage_bucket": "mock-project.appspot.com"
+          },
+          "client": [
+            {
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:mockdebug",
+                "android_client_info": {
+                  "package_name": "com.eyedock.app.debug"
+                }
+              }
+            }
+          ]
+        }
+        EOF
 
     - name: Build debug APK
       run: ./gradlew assembleDebug
