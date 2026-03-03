@@ -1,7 +1,7 @@
-name: Build Debug APK
+name: Build Debug APK (No Google Services)
 
 on:
-  workflow_dispatch:  # Run manually from Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,6 +20,13 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
+    # Create a dummy/empty google-services.json to satisfy the plugin (prevents failure)
+    # This disables real Google Drive but allows build to complete
+    - name: Create dummy google-services.json
+      run: |
+        mkdir -p app/src/debug
+        echo '{}' > app/src/debug/google-services.json  # Empty JSON is enough for debug
+
     - name: Build debug APK
       run: ./gradlew assembleDebug
 
@@ -28,4 +35,4 @@ jobs:
       with:
         name: eyedock-debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 7  # Optional: keep for a week
+        retention-days: 7
